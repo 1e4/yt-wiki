@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('app:fetch-youtube')->twiceDaily(1, 13);
+        $schedule->command('app:fetch-wikipedia')->twiceDaily(1, 13);
     }
 
     /**
