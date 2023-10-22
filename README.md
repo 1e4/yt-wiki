@@ -14,6 +14,7 @@
 ## Installation
 
 ```bash
+cp .env.example .env # Fill in .env such as Youtube API Key
 composer install
 php artisan app:fetch-wikipedia
 php artisan app:fetch-youtube
