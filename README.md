@@ -2,14 +2,14 @@
 
 1. [Installation](#installation)
 2. [Exercise](#exercise-introduction)
-   3. [Task Requires](#task-requirements)
-4. [Technical Reasoning](#technical-reasoning)
-   5. [Docker](#no-docker)
-   6. [Database](#no-database)
-   7. [Tests](#tests)
-   8. [Invokable Controllers](#invokable-controllers)
-   9. [Takeaways](#things-i-took-away-from-this)
-10. [Improvements](#improvements)
+   1. [Task Requirements](#task-requirements)
+3. [Technical Reasoning](#technical-reasoning)
+   1. [Docker](#no-docker)
+   2. [Database](#no-database)
+   3. [Tests](#tests)
+   4. [Invokable Controllers](#invokable-controllers)
+   5. [Takeaways](#things-i-took-away-from-this)
+4. [Improvements](#improvements)
 
 ## Installation
 
