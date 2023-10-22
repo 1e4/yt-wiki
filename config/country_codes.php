@@ -1,7 +1,7 @@
 <?php
 return [
     'nl'    =>  'Netherlands',
-    'uk'    =>  'United Kingdom',
+    'gb'    =>  'United Kingdom',
     'de'    =>  'Germany',
     'fr'    =>  'France',
     'es'    =>  'Spain',
