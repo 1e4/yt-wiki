@@ -2,13 +2,13 @@
 
 1. [Installation](#installation)
 2. [Exercise](#exercise-introduction)
-   1. [Task Requirements](#task-requirements)
+    1. [Task Requirements](#task-requirements)
 3. [Technical Reasoning](#technical-reasoning)
-   1. [Docker](#no-docker)
-   2. [Database](#no-database)
-   3. [Tests](#tests)
-   4. [Invokable Controllers](#invokable-controllers)
-   5. [Takeaways](#things-i-took-away-from-this)
+    1. [Docker](#no-docker)
+    2. [Database](#no-database)
+    3. [Tests](#tests)
+    4. [Invokable Controllers](#invokable-controllers)
+    5. [Takeaways](#things-i-took-away-from-this)
 4. [Improvements](#improvements)
 
 ## Installation
@@ -21,7 +21,14 @@ php artisan app:fetch-youtube
 php artisan serve
 ```
 
-Visit the URL `php artisan serve` prints out and head to `/nl` or any other country code that is in `config/country_codes.php`
+After those you should also add a cron if you want the data to be refreshed
+
+```
+* * * * * php /path/to/project schedule:run 1>> /dev/null 2>&1
+```
+
+Visit the URL `php artisan serve` prints out and head to `/nl` or any other country code that is
+in `config/country_codes.php` you can also append `limit` `page` or `offset` query parameters for example `http://localhost:8080/nl?page=5`
 
 ## Exercise Introduction
 
@@ -104,7 +111,7 @@ given more time. Things I would probably change if this ever went live
 - Tests, mock responses from Youtube and Wikipedia
 - Better error handling incase an API dies - I'm working on the assumption it will always work, if it doesn't then the
   cache is still there
-- Extrapolate the Macros into their own Service Provider
+- Extrapolate the Macros into their own Service Provider and make it deferred so it's not booting on every request
 - I'd probably use the Youtube API package, but I didn't want to use any additional packages, I feel it would defeat the
   point in the task at hand, anyone can just stick packages together to make something, but I feel the point of this
   assignment is more to use the framework. Using a package would certainly clean up some code, especially when it comes

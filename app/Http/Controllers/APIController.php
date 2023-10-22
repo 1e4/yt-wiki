@@ -37,9 +37,15 @@ class APIController extends Controller
         $page = new \stdClass();
         $page->country = $cc;
 
-        $wikipediaPage = Cache::get("wikipedia.{$cc}");
+        $wikipediaPage = Cache::get("wikipedia.{$cc}") ?? [];
 
-        $topVideos = Cache::get("youtube.{$cc}.top_videos");
+        $topVideos = Cache::get("youtube.{$cc}.top_videos") ?? [];
+
+        if(count($wikipediaPage) === 0 || count($topVideos) === 0)
+        {
+            $page->error = "No results found";
+            return $page;
+        }
 
         $limit = request()->query('limit', 5);
 
