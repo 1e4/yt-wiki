@@ -22,15 +22,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Http::macro('wiki', function() {
-            return Http::baseUrl('https://en.wikipedia.org/api/rest_v1/page/');
+            return Http::baseUrl('https://en.wikipedia.org/api/rest_v1/page/summary/');
         });
 
-        Http::macro('youtubeSearch', function(string $cc) {
+        Http::macro('youtubeSearch', function(string $cc, string $pageToken) {
             return Http::baseUrl('https://www.googleapis.com/youtube/v3/search')
                 ->withQueryParameters([
                     'chart'=>   'mostPopular',
                     'regionCode'    =>  $cc,
-                    'key'   =>  config('services.youtube.key')
+                    'key'   =>  config('services.youtube.key'),
+                    'maxResults'    =>  50,
+                    'order' =>  'viewCount',
+                    'pageToken' =>  $pageToken
                 ]);
         });
 
