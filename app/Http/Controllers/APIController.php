@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StandardAPIRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -11,10 +12,16 @@ class APIController extends Controller
 {
     public function __invoke(string $countryCode): JsonResponse
     {
-        $page = $this->composeResponse($countryCode);
+        if (in_array($countryCode, array_keys(config('country_codes')))) {
+            $page = $this->composeResponse($countryCode);
 
-        return response()
-            ->json($page);
+            return response()
+                ->json($page);
+        } else {
+            return response()
+                ->json(['error' => 'Country Code not found'], 404);
+        }
+
 
     }
 
@@ -48,16 +55,19 @@ class APIController extends Controller
         // Compose the requested fields
         // Youtube API - Description, thumbnails standard (or default if standard doesn't exist) and high res
         // Wikipedia API - Excerpt that appears before the main sections on wikipedia
-        foreach ($topVideos->items as $video) {
-            $vid = Cache::get("youtube.{$cc}.{$video->id->videoId}")->items[0];
 
-            $page->videos[] = [
-                'description' => $vid->snippet->description,
-                'thumbnails' => [
-                    'standard' => $vid->snippet->thumbnails->standard->url ?? $vid->snippet->thumbnails->default->url,
-                    'high' => $vid->snippet->thumbnails->high->url,
-                ]
-            ];
+        if ($topVideos) {
+            foreach ($topVideos->items as $video) {
+                $vid = Cache::get("youtube.{$cc}.{$video->id->videoId}")->items[0];
+
+                $page->videos[] = [
+                    'description' => $vid->snippet->description,
+                    'thumbnails' => [
+                        'standard' => $vid->snippet->thumbnails->standard->url ?? $vid->snippet->thumbnails->default->url,
+                        'high' => $vid->snippet->thumbnails->high->url,
+                    ]
+                ];
+            }
         }
 
         // Paginate - could use length aware paginator but this is simple enough
