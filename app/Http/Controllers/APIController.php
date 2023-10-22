@@ -18,6 +18,12 @@ class APIController extends Controller
 
     }
 
+    /**
+     * Compose a response to return on the API
+     *
+     * @param string $cc
+     * @return \stdClass
+     */
     private function composeResponse(string $cc): \stdClass
     {
         // In an official API you'd use OpenAPI as a spec, but for this purpose we just contract our standard class

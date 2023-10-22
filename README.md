@@ -1,66 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Table of Contents
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+1. [Installation](#installation)
+2. [Exercise](#exercise-introduction)
+   3. [Task Requires](#task-requirements)
+4. [Technical Reasoning](#technical-reasoning)
+   5. [Docker](#no-docker)
+   6. [Database](#no-database)
+   7. [Tests](#tests)
+   8. [Invokable Controllers](#invokable-controllers)
+   9. [Takeaways](#things-i-took-away-from-this)
+10. [Improvements](#improvements)
 
-## About Laravel
+## Installation
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```bash
+composer install
+php artisan app:fetch-wikipedia
+php artisan app:fetch-youtube
+php artisan serve
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Visit the URL `php artisan serve` prints out and head to `/nl` or any other country code that is in `config/country_codes.php`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Exercise Introduction
 
-## Learning Laravel
+In this exercise your task consists of talking to two different data sources, merging the data into a coherent responses
+and returning it with a couple of niceties.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Task Requirements
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- Laravel or any other PHP framework
+- PHP 8.1
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Optionally
 
-## Laravel Sponsors
+- Docker/Docker compose
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Apart from that you have the freedom to use any library. It is recommended you use framework functionality whenever
+possible.
 
-### Premium Partners
+Going on to the task at hand:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+1. You need to fetch from the YouTube API the most popular videos for the following countries
+    - uk
+    - nl
+    - de
+    - fr
+    - es
+    - it
+    - gr
 
-## Contributing
+The important information is the description as well as the normal and high resolution thumbnails. Take care not to
+trigger rate limits any way you see fit.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. For the above countries, fetch from the Wikipedia API the initial paragraphs of their Wikipedia articles (before the
+   sections).
+3. Enrich each country with the fetched data that was collected from Wikipedia and YouTube results
+4. Return the results in JSON. You should be able to ask for offset, page and country
+5. Apply caching where necessary
 
-## Code of Conduct
+## Technical Reasoning
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+While on the basis of reading this task it may seem simple, but as is the problem with many simple tasks, there are a
+million and one ways to accomplish the task, so below is also reasoning as to the choices I chose
 
-## Security Vulnerabilities
+#### Getting data with cronjobs rather than when requested
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Hitting an API can be unpredictable and will slow response times down dramatically, so I chose to use Cronjobs to fetch
+data twice a day, this also avoids hitting any rate limits
 
-## License
+#### No docker?
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+I don't really know Docker, and while it would maybe help, this application is very simple, there is one route, no
+database, only caching
+
+#### No Database?
+
+It's completely overkill for the scenario. If we wanted to scale it or monitor for changes for popular videos then yes a
+database would be needed, but caching is all I believe that is needed for this task
+
+#### Tests?
+
+Yep, an improvement to this would be TDD, but time restraints limit that and given the simplicity of the application
+there are probably only a few edge cases where the application may crash
+
+#### Invokable controllers?
+
+Most of the logic to get the data is in the cronjobs, the controller should only really prepare the response - I could
+even cache this and return it but I don't feel such micro optimisations are needed here
+
+#### Things I took away from this
+
+Macros are cool and fun. A lot of Laravel can be extended with Macros and I felt the Http client was a perfect place to
+use these rather than polluting the commands more than they already are. The Http client is also a nice wrapper around
+Guzzle, I've never personally used it before this, I just invoked Guzzle instead.
+
+### Improvements
+
+There are a million ways to write this as I mentioned earlier and probably a thousand ways to improve the application
+given more time. Things I would probably change if this ever went live
+
+- Tests, mock responses from Youtube and Wikipedia
+- Better error handling incase an API dies - I'm working on the assumption it will always work, if it doesn't then the
+  cache is still there
+- Extrapolate the Macros into their own Service Provider
+- I'd probably use the Youtube API package, but I didn't want to use any additional packages, I feel it would defeat the
+  point in the task at hand, anyone can just stick packages together to make something, but I feel the point of this
+  assignment is more to use the framework. Using a package would certainly clean up some code, especially when it comes
+  to pagination
+- Could extrapolate from logic away from commands into a Service such as Services/Youtube to clean up some code
+- Any API going intro production should be based on [OpenAPI](https://spec.openapis.org/oas/v3.0.3)
+
+Overall I believe the application fits the task assigned, but as mentioned, for those that spend days on it you could
+expand it quite a but with new features and improvements

@@ -26,7 +26,7 @@ class FetchYoutube extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $cc = $this->argument('cc');
 
@@ -39,6 +39,12 @@ class FetchYoutube extends Command
         }
     }
 
+    /**
+     * Grab all the videos, then the information for each video
+     *
+     * @param string $cc
+     * @return void
+     */
     private function performCache(string $cc): void {
         $videos = $this->getAllVideosFor($cc);
 
@@ -52,6 +58,13 @@ class FetchYoutube extends Command
         }
     }
 
+    /**
+     * Get the top videos for a specific country based off country code
+     *
+     * @param string $cc
+     * @param string $pageToken
+     * @return \stdClass
+     */
     private function getTopVideosForCountry(string $cc, string $pageToken): \stdClass
     {
         $req = Http::youtubeSearch($cc, $pageToken)
@@ -65,6 +78,14 @@ class FetchYoutube extends Command
         return $req;
     }
 
+    /**
+     * Get information for a specific video based on video ID
+     * CC is needed for caching technique
+     *
+     * @param $cc
+     * @param $videoId
+     * @return void
+     */
     private function getVideoInfo($cc, $videoId): void
     {
         $req = Http::youtubeVideo($videoId)
@@ -76,6 +97,13 @@ class FetchYoutube extends Command
         Cache::put("youtube.{$cc}.{$videoId}", $req);
     }
 
+    /**
+     * Get all videos for a country
+     *
+     * @param string $cc
+     * @param int $maxPages
+     * @return array
+     */
     private function getAllVideosFor(string $cc, int $maxPages = 2): array {
         $videos = [];
 

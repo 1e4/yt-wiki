@@ -26,7 +26,7 @@ class FetchWikipedia extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $cc = $this->argument('cc');
 
@@ -38,6 +38,13 @@ class FetchWikipedia extends Command
         }
     }
 
+    /**
+     * Cache the response from wikipedia
+     *
+     * @param string $cc
+     * @param string $countryName
+     * @return void
+     */
     private function performCache(string $cc, string $countryName): void
     {
         $res = Http::wiki()->get(Str::snake($countryName));
